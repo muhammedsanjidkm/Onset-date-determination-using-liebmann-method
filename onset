@@ -1,0 +1,120 @@
+import pandas as pd
+excelpath="D:/sanjid books/atmospheric/data calicut/mangalore.xlsx"
+data=pd.read_excel(excelpath)
+data
+data['date'] = pd.to_datetime(data['date'], format='%Y-%m-%d')
+
+long_term_annualmean_dailyaverage=data['precip'].mean()
+print(long_term_annualmean_dailyaverage,'long_term_annualmean_dailyaverage')
+
+data['Month'] = data['date'].dt.month
+data['Day'] = data['date'].dt.day
+mean_precipitation_by_day = data.groupby(['Month', 'Day'])['precip'].mean().reset_index()
+mean_precipitation_by_day
+preciplist=mean_precipitation_by_day['precip'].tolist()
+preciplist
+
+differences_list = [value - long_term_annualmean_dailyaverage for value in preciplist]
+differences_list
+
+import numpy as np
+cumulative_sum_list = np.cumsum(differences_list)
+#cumulative_sum_list 
+len(cumulative_sum_list)
+
+
+df_2019 = data[data['date'].dt.year == 2019]
+df_2019
+#2020
+df_2020 = data[data['date'].dt.year == 2020]
+df_2020
+#2021
+df_2021 = data[data['date'].dt.year == 2021]
+df_2021
+yearlymean2019=df_2019['precip'].mean()
+yearlymean2019
+yearlymean2020=df_2020['precip'].mean()
+yearlymean2020
+
+yearlymean2021=df_2021['precip'].mean()
+yearlymean2021
+datalist2019=df_2019['precip'].tolist()
+datalist2019
+datalist2020=df_2020['precip'].tolist()
+datalist2020
+datalist2021=df_2021['precip'].tolist()
+datalist2021
+differences_list2019 = [value - yearlymean2019 for value in datalist2019]
+differences_list2019 
+differences_list2020 = [value - yearlymean2020 for value in datalist2020]
+differences_list2020
+differences_list2021 = [value - yearlymean2021 for value in datalist2021]
+differences_list2021    
+
+import numpy as np
+cumulative_sum_list2019 = np.cumsum(differences_list2019)
+cumulative_sum_list2019
+cumulative_sum_list2020= np.cumsum(differences_list2020)
+cumulative_sum_list2020
+cumulative_sum_list2021 = np.cumsum(differences_list2021)
+cumulative_sum_list2021
+len(cumulative_sum_list2021)
+
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from datetime import datetime, timedelta
+
+# Assuming cumulative_sum_list is your list of cumulative sums
+# Assuming there are 365 days in your dataset
+days2019 = list(range(1, 366))
+#days2020 = list(range(1, 367))
+
+# Generate a list of dates from January 1st to December 31st
+start_date = datetime(2019, 1, 1)  
+date_list2019 = [start_date + timedelta(days=day - 1) for day in days2019]
+start_date2020 = datetime(2020, 1, 1)  
+date_list2020 = [start_date + timedelta(days=day -1) for day in days2020]
+
+# Plotting the cumulative sums
+#cumulative_sum_list20191=cumulative_sum_list2019[92:183]
+#plt.plot(date_list2019, cumulative_sum_list2019, label='Cumulative Sums2019',color='red')
+
+
+#cumulative_sum_list20201=cumulative_sum_list2020[93:184]
+#plt.plot(date_list2020, cumulative_sum_list2020, label='Cumulative Sums2020',color='blue')
+
+#cumulative_sum_list20211=cumulative_sum_list2021[92:183]
+plt.plot(date_list2019, cumulative_sum_list2021, label='Cumulative Sums2021',color='green')
+#plt.plot(date_list2019,cumulative_sum_list, label='anomalies',color='black')
+# Formatting x-axis to display only month and day
+
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m-%d'))
+plt.gca().xaxis.set_major_locator(mdates.MonthLocator())
+
+
+
+
+
+# Adding labels and title
+plt.xlabel('Date (Month-Day)')
+plt.ylabel('Cumulative Sums of Differences (mm)')
+plt.title('Cumulative Sums of Precipitation Differences(mangalore(2019))')
+plt.legend()
+
+# Rotating x-axis labels
+plt.gcf().autofmt_xdate()
+
+
+plt.show()
+
+min_value2019 =np.argmin(cumulative_sum_list2019)
+max_value2019 =np.argmax(cumulative_sum_list2019)
+min_date2019 = date_list2019[min_value2019]
+max_date2019 = date_list2019[max_value2019]
+min_date2019,max_date2019
+
+min_value2020 =np.argmin(cumulative_sum_list2020)
+max_value2020 =np.argmax(cumulative_sum_list2020)
+min_date2020 = date_list2020[min_value2020]
+max_date2020 = date_list2020[max_value2020]
+min_date2020,max_date2020
